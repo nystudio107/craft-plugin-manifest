@@ -54,7 +54,12 @@ class ManifestService extends Component
     public $assetClass;
 
     /**
-     * @var bool Whether the devServer should be used, set based on `NYS_PLUGIN_DEVSERVER` env var
+     * @var string The environment variable to look for in order to enable the devServer; the value doesn't matter, it just needs to exist
+     */
+    public $pluginDevServerEnvVar = 'NYS_PLUGIN_DEVSERVER';
+
+    /**
+     * @var bool Whether the devServer should be used, set based on the $pluginDevServerEnvVar env var
      */
     public $useDevServer = false;
 
@@ -117,7 +122,8 @@ class ManifestService extends Component
         );
         $this->serverManifestPath = Craft::getAlias($bundle->sourcePath);
         $this->serverPublicPath = $baseAssetsUrl;
-        $useDevServer = getenv('NYS_PLUGIN_DEVSERVER');
+        // See if the $pluginDevServerEnvVar env var exists, and if so, try using the devServer
+        $useDevServer = getenv($this->pluginDevServerEnvVar);
         if ($useDevServer !== false) {
             $this->useDevServer = (bool)$useDevServer;
         }
