@@ -15,10 +15,16 @@ use Craft;
 use craft\base\Component;
 use craft\helpers\Json as JsonHelper;
 use craft\helpers\UrlHelper;
-
 use craft\web\AssetBundle;
+
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
+
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
+use yii\caching\ChainedDependency;
+use yii\caching\FileDependency;
 use yii\caching\TagDependency;
 use yii\web\NotFoundHttpException;
 
@@ -49,7 +55,7 @@ class ManifestService extends Component
     // =========================================================================
 
     /**
-     * @var AssetBundle Asset bundle to get the published URLs from
+     * @var string AssetBundle bundle class name to get the published URLs from
      */
     public $assetClass;
 
@@ -419,6 +425,17 @@ class ManifestService extends Component
                 self::CACHE_TAG . $this->assetClass . $path,
             ],
         ]);
+        // If this is a file path such as for the `manifest.json`, add a FileDependency so it's cache bust if the file changes
+        if (!UrlHelper::isAbsoluteUrl($path)) {
+            $dependency = new ChainedDependency([
+                'dependencies' => [
+                    new FileDependency([
+                        'fileName' => $path
+                    ]),
+                    $dependency
+                ]
+            ]);
+        }
         // Set the cache duration based on devMode
         $cacheDuration = Craft::$app->getConfig()->getGeneral()->devMode
             ? self::DEVMODE_CACHE_DURATION
@@ -429,7 +446,30 @@ class ManifestService extends Component
             self::CACHE_KEY . $this->assetClass . $path,
             function () use ($path, $callback) {
                 $result = null;
-                $contents = @file_get_contents($path);
+                $contents = null;
+                if (UrlHelper::isAbsoluteUrl($path)) {
+                    $client = new Client([
+                        RequestOptions::HTTP_ERRORS => false,
+                        RequestOptions::CONNECT_TIMEOUT => 3,
+                        RequestOptions::VERIFY => false,
+                        RequestOptions::TIMEOUT => 5,
+                    ]);
+                    try {
+                        $response = $client->request('GET', $path, [
+                            RequestOptions::HEADERS => [
+                                'User-Agent' => "User-Agent:Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13\r\n",
+                                'Accept' => '*/*',
+                            ],
+                        ]);
+                        if ($response->getStatusCode() === 200) {
+                            $contents = $response->getBody()->getContents();
+                        }
+                    } catch(GuzzleException $e) {
+                        Craft::error($e, __METHOD__);
+                    }
+                } else {
+                    $contents = @file_get_contents($path);
+                }
                 if ($contents) {
                     $result = $contents;
                     if ($callback) {
