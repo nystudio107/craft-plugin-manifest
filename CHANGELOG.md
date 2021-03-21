@@ -1,5 +1,12 @@
 # Plugin Manifest Changelog
 
+## 1.0.2 - UNRELEASED
+### Added
+* Added a `FileDependency` cache dependency for files loaded from a local path, so things like the `manifest.json` will auto-cache bust if the file changes
+
+### Changed
+* Use Guzzle for remote file fetches rather than `curl`, for improved performance
+
 ## 1.0.1 - 2018.03.05
 ### Added
 * Added the ability to pass in the environment variable to check for enabling the devServer, so it's not hard-coded at `NYS_PLUGIN_DEVSERVER`
