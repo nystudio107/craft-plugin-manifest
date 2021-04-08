@@ -448,12 +448,20 @@ class ManifestService extends Component
                 $result = null;
                 $contents = null;
                 if (UrlHelper::isAbsoluteUrl($path)) {
-                    $client = new Client([
+                    $clientOptions = [
                         RequestOptions::HTTP_ERRORS => false,
                         RequestOptions::CONNECT_TIMEOUT => 3,
                         RequestOptions::VERIFY => false,
                         RequestOptions::TIMEOUT => 5,
-                    ]);
+                    ];
+                    // If we're hot, insert a short 50ms delay in fetching remove files, to handle a webpack-dev-server/
+                    // Tailwind CSS JIT race condition
+                    if ($this->isHot) {
+                        $clientOptions = array_merge($clientOptions, [
+                            RequestOptions::DELAY => 100,
+                        ]);
+                    }
+                    $client = new Client($clientOptions);
                     try {
                         $response = $client->request('GET', $path, [
                             RequestOptions::HEADERS => [
