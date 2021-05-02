@@ -11,7 +11,7 @@
         "docs": "https://github.com/nystudio107/craft-plugin-manifest/blob/v1/README.md",
         "issues": "https://github.com/nystudio107/craft-plugin-manifest/issues"
     },
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "nystudio107",
