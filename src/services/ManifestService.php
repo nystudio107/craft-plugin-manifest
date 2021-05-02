@@ -55,7 +55,7 @@ class ManifestService extends Component
     // =========================================================================
 
     /**
-     * @var string AssetBundle bundle class name to get the published URLs from
+     * @var AssetBundle bundle class name to get the published URLs from
      */
     public $assetClass;
 
