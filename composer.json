@@ -1,7 +1,7 @@
 {
     "name": "nystudio107/craft-plugin-manifest",
     "description": "Plugin Manifest is the conduit between Craft CMS plugins and webpack, with manifest.json & webpack-dev-server HMR support",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "keywords": [
         "craftcms",
         "plugin",
@@ -11,7 +11,7 @@
         "docs": "https://github.com/nystudio107/craft-plugin-manifest/blob/v1/README.md",
         "issues": "https://github.com/nystudio107/craft-plugin-manifest/issues"
     },
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "nystudio107",
