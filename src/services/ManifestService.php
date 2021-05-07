@@ -120,18 +120,22 @@ class ManifestService extends Component
      */
     public function init()
     {
-        $this->invalidateCaches();
-        $bundle = new $this->assetClass;
-        $baseAssetsUrl = Craft::$app->assetManager->getPublishedUrl(
-            $bundle->sourcePath,
-            true
-        );
-        $this->serverManifestPath = Craft::getAlias($bundle->sourcePath);
-        $this->serverPublicPath = $baseAssetsUrl;
-        // See if the $pluginDevServerEnvVar env var exists, and if so, try using the devServer
-        $useDevServer = getenv($this->pluginDevServerEnvVar);
-        if ($useDevServer !== false) {
-            $this->useDevServer = (bool)$useDevServer;
+        parent::init();
+        $request = Craft::$app->getRequest();
+        if (!$request->getIsConsoleRequest()) {
+            $this->invalidateCaches();
+            $bundle = new $this->assetClass;
+            $baseAssetsUrl = Craft::$app->assetManager->getPublishedUrl(
+                $bundle->sourcePath,
+                true
+            );
+            $this->serverManifestPath = Craft::getAlias($bundle->sourcePath);
+            $this->serverPublicPath = $baseAssetsUrl;
+            // See if the $pluginDevServerEnvVar env var exists, and if so, try using the devServer
+            $useDevServer = getenv($this->pluginDevServerEnvVar);
+            if ($useDevServer !== false) {
+                $this->useDevServer = (bool)$useDevServer;
+            }
         }
     }
 
