@@ -1,5 +1,9 @@
 # Plugin Manifest Changelog
 
+## 1.0.5 - 2021.07.13
+### Changed
+* Wrap calls to `is_file()` with try/catch, to handle open_basedir restrictions that cause exceptions to be thrown (https://github.com/nystudio107/craft-seomatic/issues/924)
+
 ## 1.0.4 - 2021.05.06
 ### Fixed
 * Don't call any AssetManager methods in the component `init()` method during console requests
