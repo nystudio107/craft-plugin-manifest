@@ -149,7 +149,7 @@ class ManifestService extends Component
     public function registerJsModules(array $modules)
     {
         $view = Craft::$app->getView();
-        foreach($modules as $module) {
+        foreach ($modules as $module) {
             $jsModule = $this->getModule($module, 'modern');
             if ($jsModule) {
                 $view->registerJsFile($jsModule, [
@@ -169,7 +169,7 @@ class ManifestService extends Component
     public function registerCssModules(array $modules)
     {
         $view = Craft::$app->getView();
-        foreach($modules as $module) {
+        foreach ($modules as $module) {
             $cssModule = $this->getModule($module, 'legacy');
             if ($cssModule) {
                 $view->registerCssFile($cssModule, [
@@ -183,7 +183,7 @@ class ManifestService extends Component
      * Get the passed in JS module from the manifest, then output a `<script src="">` tag for it in the HTML
      *
      * @param string $moduleName
-     * @param bool   $async
+     * @param bool $async
      *
      * @return null|string
      * @throws NotFoundHttpException
@@ -215,7 +215,7 @@ class ManifestService extends Component
      * Get the passed in CS module from the manifest, then output a `<link>` tag for it in the HTML
      *
      * @param string $moduleName
-     * @param bool   $async
+     * @param bool $async
      *
      * @return string
      * @throws NotFoundHttpException
@@ -245,7 +245,7 @@ class ManifestService extends Component
      *
      * @param string $moduleName
      * @param string $type
-     * @param bool   $soft
+     * @param bool $soft
      *
      * @return null|string
      * @throws NotFoundHttpException
@@ -268,12 +268,12 @@ class ManifestService extends Component
                 $module = $alias;
             }
             // Make sure it's a full URL
-            if (!UrlHelper::isAbsoluteUrl($module) && !is_file($module)) {
-                try {
+            try {
+                if (!UrlHelper::isAbsoluteUrl($module) && !is_file($module)) {
                     $module = UrlHelper::siteUrl($module);
-                } catch (Exception $e) {
-                    Craft::error($e->getMessage(), __METHOD__);
                 }
+            } catch (Exception $e) {
+                Craft::error($e->getMessage(), __METHOD__);
             }
         }
 
@@ -285,7 +285,7 @@ class ManifestService extends Component
      *
      * @param string $moduleName
      * @param string $type
-     * @param bool   $soft
+     * @param bool $soft
      *
      * @return null|string
      * @throws NotFoundHttpException
@@ -384,7 +384,7 @@ class ManifestService extends Component
     /**
      * Return the contents of a file from a URI path
      *
-     * @param string        $path
+     * @param string $path
      * @param callable|null $callback
      *
      * @return null|mixed
@@ -397,12 +397,12 @@ class ManifestService extends Component
             $path = (string)$alias;
         }
         // Make sure it's a full URL
-        if (!UrlHelper::isAbsoluteUrl($path) && !is_file($path)) {
-            try {
+        try {
+            if (!UrlHelper::isAbsoluteUrl($path) && !is_file($path)) {
                 $path = UrlHelper::siteUrl($path);
-            } catch (Exception $e) {
-                Craft::error($e->getMessage(), __METHOD__);
             }
+        } catch (Exception $e) {
+            Craft::error($e->getMessage(), __METHOD__);
         }
 
         return $this->getFileContents($path, $callback);
@@ -411,7 +411,7 @@ class ManifestService extends Component
     /**
      * Return the contents of a file from the passed in path
      *
-     * @param string   $path
+     * @param string $path
      * @param callable $callback
      *
      * @return null|mixed
@@ -476,7 +476,7 @@ class ManifestService extends Component
                         if ($response->getStatusCode() === 200) {
                             $contents = $response->getBody()->getContents();
                         }
-                    } catch(GuzzleException $e) {
+                    } catch (GuzzleException $e) {
                         Craft::error($e, __METHOD__);
                     }
                 } else {
@@ -534,7 +534,7 @@ class ManifestService extends Component
 
     /**
      * @param string $error
-     * @param bool   $soft
+     * @param bool $soft
      *
      * @throws NotFoundHttpException
      */
