@@ -1,5 +1,9 @@
 # Plugin Manifest Changelog
 
+## 1.0.6 - 2021.08.19
+### Changed
+* Only do setup in the `ManifestServce::init()` method for CP requests
+
 ## 1.0.5 - 2021.07.13
 ### Changed
 * Wrap calls to `is_file()` with try/catch, to handle open_basedir restrictions that cause exceptions to be thrown (https://github.com/nystudio107/craft-seomatic/issues/924)
