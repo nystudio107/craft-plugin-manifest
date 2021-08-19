@@ -122,7 +122,8 @@ class ManifestService extends Component
     {
         parent::init();
         $request = Craft::$app->getRequest();
-        if (!$request->getIsConsoleRequest()) {
+        // Only bother if this is a CP request
+        if ($request->getIsCpRequest()) {
             $this->invalidateCaches();
             $bundle = new $this->assetClass;
             $baseAssetsUrl = Craft::$app->assetManager->getPublishedUrl(
