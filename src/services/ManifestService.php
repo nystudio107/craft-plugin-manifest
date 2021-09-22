@@ -301,11 +301,7 @@ class ManifestService extends Component
             if (empty($manifest[$moduleName])) {
                 // Don't report errors for any files in SUPPRESS_ERRORS_FOR_MODULES
                 if (!in_array($moduleName, self::SUPPRESS_ERRORS_FOR_MODULES)) {
-                    $this->reportError(Craft::t(
-                        'image-optimize',
-                        'Module does not exist in the manifest: {moduleName}',
-                        ['moduleName' => $moduleName]
-                    ), $soft);
+                    $this->reportError("Module does not exist in the manifest: {$moduleName}", $soft);
                 }
 
                 return null;
@@ -342,11 +338,7 @@ class ManifestService extends Component
             // If the manifest isn't found, and it was hot, fall back on non-hot
             if ($manifest === null) {
                 // We couldn't find a manifest; throw an error
-                $this->reportError(Craft::t(
-                    'image-optimize',
-                    'Manifest file not found at: {manifestPath}',
-                    ['manifestPath' => $manifestPath]
-                ), true);
+                $this->reportError("Manifest file not found at: {$manifestPath}", true);
                 if ($this->isHot) {
                     // Try again, but not with home module replacement
                     $this->isHot = false;
