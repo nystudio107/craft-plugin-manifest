@@ -1,5 +1,9 @@
 # Plugin Manifest Changelog
 
+## 1.0.7 - 2021.09.22
+### Changed
+* Remove `Craft::t()` that depended on a translation method that may or may not exist
+
 ## 1.0.6 - 2021.08.19
 ### Changed
 * Only do setup in the `ManifestServce::init()` method for CP requests
