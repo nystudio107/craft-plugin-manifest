@@ -1,5 +1,9 @@
 # Plugin Manifest Changelog
 
+## 1.0.8 - 2021.10.11
+### Changed
+* Handle catching all exceptions, to cover misconfigured installations ([#2](https://github.com/nystudio107/craft-plugin-manifest/issues/2))
+* 
 ## 1.0.7 - 2021.09.22
 ### Changed
 * Remove `Craft::t()` that depended on a translation method that may or may not exist
