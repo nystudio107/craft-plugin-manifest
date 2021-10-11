@@ -273,7 +273,7 @@ class ManifestService extends Component
                 if (!UrlHelper::isAbsoluteUrl($module) && !is_file($module)) {
                     $module = UrlHelper::siteUrl($module);
                 }
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 Craft::error($e->getMessage(), __METHOD__);
             }
         }
@@ -394,7 +394,7 @@ class ManifestService extends Component
             if (!UrlHelper::isAbsoluteUrl($path) && !is_file($path)) {
                 $path = UrlHelper::siteUrl($path);
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             Craft::error($e->getMessage(), __METHOD__);
         }
 
@@ -469,7 +469,7 @@ class ManifestService extends Component
                         if ($response->getStatusCode() === 200) {
                             $contents = $response->getBody()->getContents();
                         }
-                    } catch (GuzzleException $e) {
+                    } catch (\Throwable $e) {
                         Craft::error($e, __METHOD__);
                     }
                 } else {
