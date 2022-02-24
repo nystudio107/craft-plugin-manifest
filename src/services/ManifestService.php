@@ -15,13 +15,9 @@ use Craft;
 use craft\base\Component;
 use craft\helpers\Json as JsonHelper;
 use craft\helpers\UrlHelper;
-use craft\web\AssetBundle;
-
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
-
-use yii\base\Exception;
+use Throwable;
 use yii\base\InvalidConfigException;
 use yii\caching\ChainedDependency;
 use yii\caching\FileDependency;
@@ -55,49 +51,49 @@ class ManifestService extends Component
     // =========================================================================
 
     /**
-     * @var AssetBundle bundle class name to get the published URLs from
+     * @var string bundle class name to get the published URLs from
      */
-    public $assetClass;
+    public string $assetClass;
 
     /**
      * @var string The environment variable to look for in order to enable the devServer; the value doesn't matter, it just needs to exist
      */
-    public $pluginDevServerEnvVar = 'NYS_PLUGIN_DEVSERVER';
+    public string $pluginDevServerEnvVar = 'NYS_PLUGIN_DEVSERVER';
 
     /**
      * @var bool Whether the devServer should be used, set based on the $pluginDevServerEnvVar env var
      */
-    public $useDevServer = false;
+    public bool $useDevServer = false;
 
     /**
      * @var string Name of the legacy manifest file
      */
-    public $manifestLegacy = 'manifest.json';
+    public string $manifestLegacy = 'manifest.json';
 
     /**
      * @var string Name of the modern manifest file
      */
-    public $manifestModern = 'manifest.json';
+    public string $manifestModern = 'manifest.json';
 
     /**
      * @var string The normal server manifest path
      */
-    public $serverManifestPath = '/';
+    public string $serverManifestPath = '/';
 
     /**
      * @var string The normal server public path
      */
-    public $serverPublicPath = '/';
+    public string $serverPublicPath = '/';
 
     /**
      * @var string The dev server manifest path
      */
-    public $devServerManifestPath = '';
+    public string $devServerManifestPath = '';
 
     /**
      * @var string The dev server public path
      */
-    public $devServerPublicPath = '';
+    public string $devServerPublicPath = '';
 
     // Protected Properties
     // =========================================================================
@@ -105,12 +101,12 @@ class ManifestService extends Component
     /**
      * @var array
      */
-    protected $files;
+    protected array $files;
 
     /**
      * @var bool
      */
-    protected $isHot = false;
+    protected bool $isHot = false;
 
     // Public Methods
     // =========================================================================
@@ -118,7 +114,7 @@ class ManifestService extends Component
     /**
      * @inheritDoc
      */
-    public function init()
+    public function init(): void
     {
         parent::init();
         $request = Craft::$app->getRequest();
@@ -147,7 +143,7 @@ class ManifestService extends Component
      * @throws NotFoundHttpException
      * @throws InvalidConfigException
      */
-    public function registerJsModules(array $modules)
+    public function registerJsModules(array $modules): void
     {
         $view = Craft::$app->getView();
         foreach ($modules as $module) {
@@ -167,7 +163,7 @@ class ManifestService extends Component
      * @throws NotFoundHttpException
      * @throws InvalidConfigException
      */
-    public function registerCssModules(array $modules)
+    public function registerCssModules(array $modules): void
     {
         $view = Craft::$app->getView();
         foreach ($modules as $module) {
@@ -189,7 +185,7 @@ class ManifestService extends Component
      * @return null|string
      * @throws NotFoundHttpException
      */
-    public function includeJsModule(string $moduleName, bool $async)
+    public function includeJsModule(string $moduleName, bool $async): ?string
     {
         $legacyModule = $this->getModule($moduleName, 'legacy');
         if ($legacyModule === null) {
@@ -242,6 +238,16 @@ class ManifestService extends Component
     // =========================================================================
 
     /**
+     * Invalidate all of the manifest caches
+     */
+    public function invalidateCaches(): void
+    {
+        $cache = Craft::$app->getCache();
+        TagDependency::invalidate($cache, self::CACHE_TAG . $this->assetClass);
+        Craft::info('All manifest caches cleared', __METHOD__);
+    }
+
+    /**
      * Return the URI to a module
      *
      * @param string $moduleName
@@ -251,7 +257,7 @@ class ManifestService extends Component
      * @return null|string
      * @throws NotFoundHttpException
      */
-    protected function getModule(string $moduleName, string $type = 'modern', bool $soft = false)
+    protected function getModule(string $moduleName, string $type = 'modern', bool $soft = false): ?string
     {
         // Get the module entry
         $module = $this->getModuleEntry($moduleName, $type, $soft);
@@ -273,7 +279,7 @@ class ManifestService extends Component
                 if (!UrlHelper::isAbsoluteUrl($module) && !is_file($module)) {
                     $module = UrlHelper::siteUrl($module);
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 Craft::error($e->getMessage(), __METHOD__);
             }
         }
@@ -291,7 +297,7 @@ class ManifestService extends Component
      * @return null|string
      * @throws NotFoundHttpException
      */
-    protected function getModuleEntry(string $moduleName, string $type = 'modern', bool $soft = false)
+    protected function getModuleEntry(string $moduleName, string $type = 'modern', bool $soft = false): ?string
     {
         $module = null;
         // Get the manifest file
@@ -320,7 +326,7 @@ class ManifestService extends Component
      * @return null|array
      * @throws NotFoundHttpException
      */
-    protected function getManifestFile(string $type = 'modern')
+    protected function getManifestFile(string $type = 'modern'): ?array
     {
         $manifest = null;
         // Determine whether we should use the devServer for HMR or not
@@ -359,19 +365,9 @@ class ManifestService extends Component
      *
      * @return null|array
      */
-    protected function getJsonFile(string $path)
+    protected function getJsonFile(string $path): ?array
     {
         return $this->getFileFromUri($path, [JsonHelper::class, 'decodeIfJson']);
-    }
-
-    /**
-     * Invalidate all of the manifest caches
-     */
-    public function invalidateCaches()
-    {
-        $cache = Craft::$app->getCache();
-        TagDependency::invalidate($cache, self::CACHE_TAG . $this->assetClass);
-        Craft::info('All manifest caches cleared', __METHOD__);
     }
 
     /**
@@ -394,7 +390,7 @@ class ManifestService extends Component
             if (!UrlHelper::isAbsoluteUrl($path) && !is_file($path)) {
                 $path = UrlHelper::siteUrl($path);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Craft::error($e->getMessage(), __METHOD__);
         }
 
@@ -469,7 +465,7 @@ class ManifestService extends Component
                         if ($response->getStatusCode() === 200) {
                             $contents = $response->getBody()->getContents();
                         }
-                    } catch (\Throwable $e) {
+                    } catch (Throwable $e) {
                         Craft::error($e, __METHOD__);
                     }
                 } else {
@@ -531,7 +527,7 @@ class ManifestService extends Component
      *
      * @throws NotFoundHttpException
      */
-    protected function reportError(string $error, $soft = false)
+    protected function reportError(string $error, $soft = false): void
     {
         $devMode = Craft::$app->getConfig()->getGeneral()->devMode;
         if ($devMode && !$soft) {

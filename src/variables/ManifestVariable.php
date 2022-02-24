@@ -2,15 +2,12 @@
 
 namespace nystudio107\pluginmanifest\variables;
 
-use nystudio107\pluginmanifest\ManifestService;
-
 use craft\base\Component;
 use craft\helpers\Template;
-
+use nystudio107\pluginmanifest\services\ManifestService;
+use Twig\Markup;
 use yii\base\InvalidConfigException;
 use yii\web\NotFoundHttpException;
-
-use Twig\Markup;
 
 class ManifestVariable extends Component
 {
@@ -21,7 +18,7 @@ class ManifestVariable extends Component
     /**
      * @var ManifestService the manifest service
      */
-    public $manifestService;
+    public ManifestService $manifestService;
 
     // Public Methods
     // =========================================================================
@@ -34,7 +31,7 @@ class ManifestVariable extends Component
      * @throws InvalidConfigException
      * @throws NotFoundHttpException
      */
-    public function registerJsModules(array $modules)
+    public function registerJsModules(array $modules): void
     {
         $this->manifestService->registerJsModules($modules);
     }
@@ -47,7 +44,7 @@ class ManifestVariable extends Component
      * @throws InvalidConfigException
      * @throws NotFoundHttpException
      */
-    public function registerCssModules(array $modules)
+    public function registerCssModules(array $modules): void
     {
         $this->manifestService->registerCssModules($modules);
     }
@@ -56,13 +53,13 @@ class ManifestVariable extends Component
     /**
      * Get the passed in JS module from the manifest, then output a `<script src="">` tag for it in the HTML
      *
-     * @param string     $moduleName
-     * @param bool       $async
+     * @param string $moduleName
+     * @param bool $async
      *
      * @return null|Markup
      * @throws NotFoundHttpException
      */
-    public function includeJsModule(string $moduleName, bool $async = false)
+    public function includeJsModule(string $moduleName, bool $async = false): ?Markup
     {
         return Template::raw(
             $this->manifestService->includeJsModule($moduleName, $async) ?? ''
@@ -72,8 +69,8 @@ class ManifestVariable extends Component
     /**
      * Get the passed in CS module from the manifest, then output a `<link>` tag for it in the HTML
      *
-     * @param string     $moduleName
-     * @param bool       $async
+     * @param string $moduleName
+     * @param bool $async
      *
      * @return Markup
      * @throws NotFoundHttpException

@@ -1,5 +1,11 @@
 # Plugin Manifest Changelog
 
+## 4.0.0-beta.1 - 2022.02.24
+
+### Added
+
+* Initial Craft CMS 4 compatibility
+
 ## 1.0.8 - 2021.10.11
 ### Changed
 * Handle catching all exceptions, to cover misconfigured installations ([#2](https://github.com/nystudio107/craft-plugin-manifest/issues/2))
