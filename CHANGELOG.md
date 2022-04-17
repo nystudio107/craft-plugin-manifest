@@ -1,5 +1,9 @@
 # Plugin Manifest Changelog
 
+## 4.0.0-beta.2 - 2022.04.17
+### Fixed
+* Fix incorrect `User-Agent` header that could cause an error to be thrown
+
 ## 4.0.0-beta.1 - 2022.02.24
 
 ### Added
