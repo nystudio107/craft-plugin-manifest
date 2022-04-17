@@ -1,5 +1,9 @@
 # Plugin Manifest Changelog
 
+## 1.0.9 - 2022.04.17
+### Fixed
+* Fix incorrect `User-Agent` header that could cause an error to be thrown
+
 ## 1.0.8 - 2021.10.11
 ### Changed
 * Handle catching all exceptions, to cover misconfigured installations ([#2](https://github.com/nystudio107/craft-plugin-manifest/issues/2))

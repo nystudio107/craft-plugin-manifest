@@ -16,12 +16,9 @@ use craft\base\Component;
 use craft\helpers\Json as JsonHelper;
 use craft\helpers\UrlHelper;
 use craft\web\AssetBundle;
-
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
-
-use yii\base\Exception;
+use Throwable;
 use yii\base\InvalidConfigException;
 use yii\caching\ChainedDependency;
 use yii\caching\FileDependency;
@@ -238,6 +235,16 @@ class ManifestService extends Component
         return implode("\r\n", $lines);
     }
 
+    /**
+     * Invalidate all of the manifest caches
+     */
+    public function invalidateCaches()
+    {
+        $cache = Craft::$app->getCache();
+        TagDependency::invalidate($cache, self::CACHE_TAG . $this->assetClass);
+        Craft::info('All manifest caches cleared', __METHOD__);
+    }
+
     // Protected Static Methods
     // =========================================================================
 
@@ -273,7 +280,7 @@ class ManifestService extends Component
                 if (!UrlHelper::isAbsoluteUrl($module) && !is_file($module)) {
                     $module = UrlHelper::siteUrl($module);
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 Craft::error($e->getMessage(), __METHOD__);
             }
         }
@@ -365,16 +372,6 @@ class ManifestService extends Component
     }
 
     /**
-     * Invalidate all of the manifest caches
-     */
-    public function invalidateCaches()
-    {
-        $cache = Craft::$app->getCache();
-        TagDependency::invalidate($cache, self::CACHE_TAG . $this->assetClass);
-        Craft::info('All manifest caches cleared', __METHOD__);
-    }
-
-    /**
      * Return the contents of a file from a URI path
      *
      * @param string $path
@@ -394,7 +391,7 @@ class ManifestService extends Component
             if (!UrlHelper::isAbsoluteUrl($path) && !is_file($path)) {
                 $path = UrlHelper::siteUrl($path);
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Craft::error($e->getMessage(), __METHOD__);
         }
 
@@ -462,14 +459,14 @@ class ManifestService extends Component
                     try {
                         $response = $client->request('GET', $path, [
                             RequestOptions::HEADERS => [
-                                'User-Agent' => "User-Agent:Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13\r\n",
+                                'User-Agent' => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13",
                                 'Accept' => '*/*',
                             ],
                         ]);
                         if ($response->getStatusCode() === 200) {
                             $contents = $response->getBody()->getContents();
                         }
-                    } catch (\Throwable $e) {
+                    } catch (Throwable $e) {
                         Craft::error($e, __METHOD__);
                     }
                 } else {
