@@ -1,5 +1,9 @@
 # Plugin Manifest Changelog
 
+## 4.0.0-beta.3 - 2022.04.26
+### Changed
+* Don't log the full exception on a Guzzle error, just log the message
+
 ## 4.0.0-beta.2 - 2022.04.17
 ### Fixed
 * Fix incorrect `User-Agent` header that could cause an error to be thrown
