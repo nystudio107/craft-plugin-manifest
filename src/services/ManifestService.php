@@ -466,7 +466,7 @@ class ManifestService extends Component
                             $contents = $response->getBody()->getContents();
                         }
                     } catch (Throwable $e) {
-                        Craft::error($e, __METHOD__);
+                        Craft::error($e->getMessage(), __METHOD__);
                     }
                 } else {
                     $contents = @file_get_contents($path);
